@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPTUnleashed</title>
-  <link rel="stylesheet" href="style.css?v=32">
+  <link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
   <div class="sidebar">
@@ -17,32 +17,31 @@
   <div class="content">
     <div class="content-wrapper">
       <div class="model-dropdown">
-        <form>
-          <label for="modelSelect">Model</label>
-          <select id="modelSelect" onchange="updateURL()">
-            <option value="" disabled selected>Select a Model</option>
-            <option value="gpt-3.5">GPT-3.5</option>
-            <option value="davinci-003">Davinci-003</option>
-            <option value="gpt-4">GPT-4</option>
-            <option value="llama">LLaMA</option>
-            <option value="alpaca">Alpaca</option>
-            <option value="bard">Bard</option>
-            <option value="auto-gpt">AUTO-GPT</option>
-          </select>
-        </form>
+        <div class="model-label">Model</div>
+        <select id="modelSelect" onchange="updateURL()">
+          <option value="" disabled selected>Select a Model</option>
+          <option value="gpt-3.5">GPT-3.5</option>
+          <option value="davinci-003">Davinci-003</option>
+          <option value="gpt-4">GPT-4</option>
+          <option value="llama">LLaMA</option>
+          <option value="alpaca">Alpaca</option>
+          <option value="bard">Bard</option>
+          <option value="auto-gpt">AUTO-GPT</option>
+        </select>
       </div>
       <div class="centered-text">GPTUnleashed</div>
       <div class="search-wrapper">
         <form class="search-form" onsubmit="submitForm(event)">
-          <label for="search-input">Search</label>
-          <input type="text" placeholder="Type here..." id="search-input">
-          <button type="submit" class="submit-btn">
-            <img src="https://gptunleashed.pro/cdn/svgs/icons/send.svg" alt="Submit">
-          </button>
+          <div class="search">
+            <input type="text" placeholder="Type here..." id="search-input">
+            <button type="submit" class="submit-btn">
+              <img src="https://gptunleashed.pro/cdn/svgs/icons/send.svg" alt="Submit">
+            </button>
+          </div>
         </form>
-      </div>           
+      </div>
     </div>
   </div>
-  <script src="script.js?v=6"></script>
+  <script src="script.js?v=7"></script>
 </body>
 </html>

@@ -1,68 +1,62 @@
-// Model selector
-const modelSelect = document.getElementById("modelSelect");
-const params = new URLSearchParams(window.location.search);
-const model = params.get("model");
+// get elements
+const searchForm = document.querySelector('.search-form');
+const searchInput = document.querySelector('#search-input');
+const modelSelect = document.querySelector('#modelSelect');
 
-if (model) {
-  modelSelect.value = model;
-}
-
+// update URL with selected model
 function updateURL() {
-  const newUrl = new URL(window.location);
-  newUrl.searchParams.set("model", modelSelect.value);
-  window.location.href = newUrl;
+  const selectedModel = modelSelect.value;
+  const url = new URL(window.location.href);
+  url.searchParams.set('model', selectedModel);
+  window.history.replaceState({}, '', url);
 }
 
-// Search bar
-const searchForm = document.querySelector(".search-form");
-const searchInput = document.querySelector("#search-input");
-const searchResults = document.querySelector(".search-results");
-
+// handle form submission
 function submitForm(event) {
   event.preventDefault();
-  const query = searchInput.value;
-  if (query.trim() === "") return;
-  const model = modelSelect.value;
-  const messages = [{ role: "user", content: query }];
-  if (model) messages.push({ role: "system", content: `Using ${model} model` });
-  searchInput.value = "";
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: model,
-      messages: messages,
-    }),
-  };
-  fetch("https://api.openai.com/v1/engines/davinci-codex/completions", requestOptions)
-    .then((response) => response.json())
-    .then((data) => {
-      const answer = data.choices[0].text.trim();
-      const result = `<p><strong>You:</strong> ${query}</p>
-                      <p><strong>GPT:</strong> ${answer}</p>`;
-      searchResults.innerHTML = result;
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      const result = `<p>Error: ${error.message}</p>`;
-      searchResults.innerHTML = result;
-    });
+  const searchTerm = searchInput.value.trim();
+  const selectedModel = modelSelect.value;
+  if (!searchTerm) return;
+  const message = [
+    { role: 'user', content: searchTerm }
+  ];
+  if (selectedModel) {
+    message.unshift({ role: 'system', content: `Using model: ${selectedModel}` })
+  }
+  openai.ChatCompletion.create({
+    engine: selectedModel,
+    prompt: message,
+    max_tokens: 150,
+    n: 1,
+    stop: '\n',
+    temperature: 0.7
+  })
+  .then(data => {
+    const message = data.choices[0].text.trim();
+    displayMessage(message, 'assistant');
+  })
+  .catch(error => console.error(error));
+  searchInput.value = '';
 }
 
-// Centered text
-const centeredText = document.querySelector(".centered-text");
-centeredText.style.opacity = "0.25";
-centeredText.style.textAlign = "center";
-centeredText.style.marginTop = "25%";
+// display message on the page
+function displayMessage(message, role) {
+  const messageContainer = document.createElement('div');
+  messageContainer.classList.add('message', role);
+  const messageContent = document.createElement('p');
+  messageContent.textContent = message;
+  messageContainer.appendChild(messageContent);
+  const contentWrapper = document.querySelector('.content-wrapper');
+  contentWrapper.appendChild(messageContainer);
+  contentWrapper.scrollTop = contentWrapper.scrollHeight;
+}
 
-// Model dropdown
-const modelDropdown = document.querySelector(".model-dropdown");
-modelDropdown.style.textAlign = "center";
-modelDropdown.style.marginBottom = "20px";
+// set selected model from URL parameter
+const urlParams = new URLSearchParams(window.location.search);
+const selectedModel = urlParams.get('model');
+if (selectedModel) {
+  modelSelect.value = selectedModel;
+}
 
-// Search bar and results
-const searchWrapper = document.querySelector(".search-wrapper");
-searchWrapper.style.textAlign = "center";
-searchWrapper.style.marginBottom = "40px";
-
-searchForm.addEventListener("submit", submitForm);
+// focus on search input on page load
+searchInput.focus();
