@@ -1,62 +1,63 @@
-// get elements
-const searchForm = document.querySelector('.search-form');
-const searchInput = document.querySelector('#search-input');
-const modelSelect = document.querySelector('#modelSelect');
+// Get DOM elements
+const modelSelect = document.getElementById('modelSelect');
+const searchForm = document.getElementById('search-form');
+const searchInput = document.getElementById('search-input');
 
-// update URL with selected model
+// Update URL query parameters when model is changed
 function updateURL() {
-  const selectedModel = modelSelect.value;
-  const url = new URL(window.location.href);
-  url.searchParams.set('model', selectedModel);
-  window.history.replaceState({}, '', url);
+  const newURL = new URL(window.location.href);
+  newURL.searchParams.set('model', modelSelect.value);
+  window.location.href = newURL;
 }
 
-// handle form submission
+// Handle form submission
 function submitForm(event) {
   event.preventDefault();
-  const searchTerm = searchInput.value.trim();
-  const selectedModel = modelSelect.value;
-  if (!searchTerm) return;
-  const message = [
-    { role: 'user', content: searchTerm }
+  const query = searchInput.value;
+  const model = modelSelect.value;
+  if (!query) return;
+
+  console.log('Submitting form...');
+  console.log(`Query: ${query}`);
+  console.log(`Model: ${model}`);
+
+  // Make API call
+  const apiEndpoint = `https://api.openai.com/v1/engine/${model}/completions`;
+  const prompt = [{
+      "role": "system",
+      "content": "You are a helpful assistant."
+    },
+    {
+      "role": "user",
+      "content": query
+    }
   ];
-  if (selectedModel) {
-    message.unshift({ role: 'system', content: `Using model: ${selectedModel}` })
-  }
-  openai.ChatCompletion.create({
-    engine: selectedModel,
-    prompt: message,
-    max_tokens: 150,
-    n: 1,
-    stop: '\n',
-    temperature: 0.7
-  })
-  .then(data => {
-    const message = data.choices[0].text.trim();
-    displayMessage(message, 'assistant');
-  })
-  .catch(error => console.error(error));
-  searchInput.value = '';
+  const data = {
+    "prompt": prompt,
+    "max_tokens": 128,
+    "n": 1,
+    "stop": "\n",
+  };
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  };
+  fetch(apiEndpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      const output = data.choices[0].text.trim();
+      console.log(`Output: ${output}`);
+      const responseContainer = document.getElementById('response-container');
+      responseContainer.innerHTML = `<p>${output}</p>`;
+    })
+    .catch(error => console.error(error));
 }
 
-// display message on the page
-function displayMessage(message, role) {
-  const messageContainer = document.createElement('div');
-  messageContainer.classList.add('message', role);
-  const messageContent = document.createElement('p');
-  messageContent.textContent = message;
-  messageContainer.appendChild(messageContent);
-  const contentWrapper = document.querySelector('.content-wrapper');
-  contentWrapper.appendChild(messageContainer);
-  contentWrapper.scrollTop = contentWrapper.scrollHeight;
-}
-
-// set selected model from URL parameter
-const urlParams = new URLSearchParams(window.location.search);
-const selectedModel = urlParams.get('model');
-if (selectedModel) {
-  modelSelect.value = selectedModel;
-}
-
-// focus on search input on page load
-searchInput.focus();
+// Add event listeners
+modelSelect.addEventListener('change', updateURL);
+searchForm.addEventListener('submit', submitForm);
