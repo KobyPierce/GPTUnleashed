@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPTUnleashed</title>
-  <link rel="stylesheet" href="style.css?v=400">
+  <link rel="stylesheet" href="style.css?v=401">
 </head>
 <body>
   <div class="sidebar">
@@ -17,9 +17,8 @@
   <div class="content">
     <div class="content-wrapper">
       <div class="model-dropdown">
-        <div class="dropdown-title">Model</div>
         <select id="modelSelect" onchange="updateURL()">
-          <option value="" disabled selected>Select a Model</option>
+          <option value="" disabled selected>Model</option>
           <option value="gpt-3.5">GPT-3.5</option>
           <option value="davinci-003">Davinci-003</option>
           <option value="gpt-4">GPT-4</option>
@@ -32,12 +31,14 @@
       <div class="centered-text">GPTUnleashed</div>
       <div class="search-wrapper">
         <form id="search-form">
-          <input type="text" id="search-input" placeholder="Type here...">
-          <button type="submit" class="submit-btn"><img src="https://gptunleashed.pro/cdn/svgs/icons/send.svg" alt="Submit"></button>
+          <div class="search">
+            <input type="text" id="search-input" placeholder="Type here...">
+            <button type="submit" class="submit-btn"><img src="https://gptunleashed.pro/cdn/svgs/icons/send.svg" alt="Submit"></button>
+          </div>
         </form>
       </div>
     </div>
   </div>
-  <script src="script.js?v=400"></script>
+  <script src="script.js?v=401"></script>
 </body>
 </html>
