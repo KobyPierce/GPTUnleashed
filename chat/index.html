@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPTUnleashed</title>
+  <link rel="stylesheet" href="style.css?v=29">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">GPTUnleashed</div>
+    <a href="#">Home</a>
+    <a href="#">Models</a>
+    <a href="#">About</a>
+	<a href="#">GitHub</a>
+  </div>
+			<div class="content">
+	  <div class="content-wrapper">
+		<div class="model-dropdown">
+		  <select id="modelSelect" onchange="updateURL()">
+			<option value="" disabled selected>Select a Model</option>
+			<option value="gpt-3.5">GPT-3.5</option>
+			<option value="davinci-003">Davinci-003</option>
+			<option value="gpt-4">GPT-4</option>
+			<option value="llama">LLaMA</option>
+			<option value="alpaca">Alpaca</option>
+			<option value="bard">Bard</option>
+			<option value="auto-gpt">AUTO-GPT</option>
+		  </select>
+		</div>
+	<div class="centered-text">GPTUnleashed</div>
+		<div class="search">
+		  <form>
+			<input type="text" placeholder="Type here...">
+			<button type="submit" class="submit-btn">
+			  <img src="https://gptunleashed.pro/cdn/svgs/icons/send.svg" alt="Submit">
+			</button>
+		  </form>
+		</div>
+	  </div>
+	</div>
+  <script src="script.js?v=2"></script>
+</body>
+</html>

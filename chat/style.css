@@ -1,0 +1,126 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 13%;
+    background-color: #202123;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2em;
+  }
+  
+  .logo {
+    font-size: 1.5em;
+    color: white;
+    margin-bottom: 2em;
+  }
+  
+  .sidebar a {
+    text-decoration: none;
+    color: white;
+    margin-bottom: 1em;
+  }
+  
+  .content {
+    width: 87%;
+    background-color: #444654;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    justify-content: space-between;
+  }
+  
+  .model-dropdown {
+    margin: 2em 0;
+    width: 30%;
+    align-self: center;
+  }
+  .model-dropdown select {
+    width: 100%;
+    padding: 0.5em 1em;
+    font-size: 1.1em;
+    background-color: #40414F;
+    color: white;
+    border: 1px solid #303139;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  
+  .model-dropdown option {
+    background-color: #40414F;
+    color: white;
+  }
+  
+  .model-dropdown option:first-child {
+    color: gray;
+  }
+  
+  .search {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2em;
+  }
+  
+  .search form {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .search input {
+    outline: none;
+    width: 100%;
+    padding: 0.7em 1em;
+    font-size: 1.2em;
+    background-color: #40414F;
+    color: white;
+    border: 1px solid #303139;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .search button {
+    outline: none;
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    right: 0;
+    padding: 0.7em 1em;
+    cursor: pointer;
+  }
+  
+  .search button img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .centered-text {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + (13% / 2));
+    font-size: 3em;
+    color: white;
+    opacity: 0.25;
+    transform: translate(-50%, -50%);
+  }
