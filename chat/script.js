@@ -1,60 +1,83 @@
-// Get elements
-const searchForm = document.querySelector("#search-form");
-const searchInput = document.querySelector("#search-input");
-const modelSelect = document.querySelector("#modelSelect");
-const apiInput = document.querySelector("#api-key");
+const modelSelect = document.getElementById("modelSelect");
+const searchForm = document.getElementById("search-form");
+const searchInput = document.getElementById("search-input");
+const apiKeyInput = document.getElementById("api-key-input");
 
-// Get API key from local storage or prompt user to enter it
-let apiKey = localStorage.getItem("apiKey");
-if (!apiKey) {
-  apiKey = prompt("Please enter your OpenAI API key:");
-  if (apiKey) {
-    localStorage.setItem("apiKey", apiKey);
-  }
+let apiKey = "";
+
+// get the api key from local storage if it exists
+if (localStorage.getItem("openai_api_key")) {
+  apiKey = localStorage.getItem("openai_api_key");
+  apiKeyInput.value = apiKey;
 }
 
-// Function to submit search form
-async function submitForm(event) {
+// update the api key when the input changes
+apiKeyInput.addEventListener("input", () => {
+  apiKey = apiKeyInput.value;
+  localStorage.setItem("openai_api_key", apiKey);
+  console.log("API key set:", apiKey);
+});
+
+// submit the form
+const submitForm = async (event) => {
   event.preventDefault();
-  const query = searchInput.value;
-  const model = modelSelect.value;
-  const apiUrl = `https://api.openai.com/v1/${model}/completions`;
-  const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${apiKey}`
-  };
-  const data = {
-    prompt: query,
-    max_tokens: 60,
-    n: 1,
-    stop: "."
-  };
   console.log("Submitting form...");
-  console.log("Query:", query);
-  console.log("Model:", model);
-  console.log("API Key:", apiKey);
-  console.log("API URL:", apiUrl);
-  console.log("Headers:", headers);
-  console.log("Data:", data);
-  try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const jsonResponse = await response.json();
-    console.log("API response:", jsonResponse);
-    const answer = jsonResponse.choices[0].text;
-    console.log("Answer:", answer);
-    alert(answer);
-  } catch (error) {
-    console.error("API error:", error);
-    alert("Sorry, there was an error processing your request. Please try again later.");
+
+  const query = searchInput.value.trim();
+  const model = modelSelect.value;
+
+  // validate the query and model
+  if (query === "") {
+    console.log("Error: Query cannot be empty");
+    return;
   }
+  if (model === "") {
+    console.log("Error: Model must be selected");
+    return;
+  }
+
+  // validate the api key
+  if (!apiKey) {
+    console.log("Error: No API key provided");
+    return;
+  }
+
+  // make the api request
+  const response = await fetch("https://api.openai.com/v1/engines/" + model + "/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + apiKey,
+    },
+    body: JSON.stringify({
+      prompt: query,
+      max_tokens: 1024,
+      n: 1,
+      stop: "\n",
+    }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    console.log("OpenAI response:", data);
+  } else {
+    console.log("OpenAI API error:", response.statusText);
+  }
+};
+
+// update the url when the model changes
+const updateURL = () => {
+  const params = new URLSearchParams(window.location.search);
+  params.set("model", modelSelect.value);
+  window.history.replaceState({}, "", window.location.pathname + "?" + params.toString());
+};
+
+// set the initial model based on the url
+const urlParams = new URLSearchParams(window.location.search);
+const model = urlParams.get("model");
+if (model) {
+  modelSelect.value = model;
 }
 
-// Add event listener to search form
+// handle form submission
 searchForm.addEventListener("submit", submitForm);
