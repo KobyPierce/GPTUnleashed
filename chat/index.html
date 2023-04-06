@@ -13,11 +13,11 @@
     <a href="/models.html">Models</a>
     <a href="/about.html">About</a>
     <a href="https://github.com/KobyPierce/GPTUnleashed">GitHub</a>
-    <form id="api-key-form">
-      <label for="api-key-input">API KEY</label>
-      <input type="text" id="api-key-input" name="api-key-input" placeholder="Enter your OpenAI API key here">
-      <button type="submit">Save</button>
-    </form>
+    <div class="api-key">
+      <label for="apiKeyInput">API KEY:</label>
+      <input type="text" id="apiKeyInput">
+      <button id="apiKeySubmitBtn">Submit</button>
+    </div>
   </div>
   <div class="content">
     <div class="content-wrapper">
@@ -37,8 +37,12 @@
       <div class="centered-text">GPTUnleashed</div>
       <div class="search-wrapper">
         <form id="search-form">
-          <input type="text" id="search-input" placeholder="Type here...">
-          <button type="submit" class="submit-btn"><img src="https://gptunleashed.pro/cdn/svgs/icons/send.svg" alt="Submit"></button>
+          <div class="search">
+            <input type="text" placeholder="Type here..." id="search-input">
+            <button type="submit" class="submit-btn">
+              <img src="https://gptunleashed.pro/cdn/svgs/icons/send.svg" alt="Submit">
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -1,74 +1,60 @@
-const searchForm = document.getElementById("search-form");
-const searchInput = document.getElementById("search-input");
-const modelSelect = document.getElementById("modelSelect");
-const apiKeyInput = document.getElementById("api-key-input");
-const modelEndpoint = "https://api.openai.com/v1/engines/";
+// Get elements
+const searchForm = document.querySelector("#search-form");
+const searchInput = document.querySelector("#search-input");
+const modelSelect = document.querySelector("#modelSelect");
+const apiInput = document.querySelector("#api-key");
 
-function submitForm(event) {
+// Get API key from local storage or prompt user to enter it
+let apiKey = localStorage.getItem("apiKey");
+if (!apiKey) {
+  apiKey = prompt("Please enter your OpenAI API key:");
+  if (apiKey) {
+    localStorage.setItem("apiKey", apiKey);
+  }
+}
+
+// Function to submit search form
+async function submitForm(event) {
   event.preventDefault();
-  console.log("Submitting form...");
-
-  const query = searchInput.value.trim();
+  const query = searchInput.value;
   const model = modelSelect.value;
-  const apiKey = apiKeyInput.value;
-
-  if (!query) {
-    alert("Please enter a search query.");
-    return;
-  }
-
-  if (!model) {
-    alert("Please select a model.");
-    return;
-  }
-
-  if (!apiKey) {
-    alert("Please enter your OpenAI API key.");
-    return;
-  }
-
-  console.log(`Query: ${query}`);
-  console.log(`Model: ${model}`);
-
-  const headers = new Headers();
-  headers.append("Content-Type", "application/json");
-  headers.append("Authorization", `Bearer ${apiKey}`);
-
-  fetch(`${modelEndpoint}${model}/completions`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      prompt: query,
-      max_tokens: 64,
-      n: 1,
-      stop: ["\n"]
-    })
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Failed to generate response from OpenAI API.");
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data.choices[0].text);
-    })
-    .catch(error => {
-      console.error(error);
+  const apiUrl = `https://api.openai.com/v1/${model}/completions`;
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${apiKey}`
+  };
+  const data = {
+    prompt: query,
+    max_tokens: 60,
+    n: 1,
+    stop: "."
+  };
+  console.log("Submitting form...");
+  console.log("Query:", query);
+  console.log("Model:", model);
+  console.log("API Key:", apiKey);
+  console.log("API URL:", apiUrl);
+  console.log("Headers:", headers);
+  console.log("Data:", data);
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(data)
     });
-}
-
-function updateURL() {
-  const newURL = new URL(window.location.href);
-  newURL.searchParams.set("model", modelSelect.value);
-  window.history.pushState("", "", newURL.toString());
-}
-
-(function() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const model = urlParams.get("model");
-
-  if (model) {
-    modelSelect.value = model;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const jsonResponse = await response.json();
+    console.log("API response:", jsonResponse);
+    const answer = jsonResponse.choices[0].text;
+    console.log("Answer:", answer);
+    alert(answer);
+  } catch (error) {
+    console.error("API error:", error);
+    alert("Sorry, there was an error processing your request. Please try again later.");
   }
-})();
+}
+
+// Add event listener to search form
+searchForm.addEventListener("submit", submitForm);
