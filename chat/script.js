@@ -1,63 +1,74 @@
-// Get DOM elements
-const modelSelect = document.getElementById('modelSelect');
-const searchForm = document.getElementById('search-form');
-const searchInput = document.getElementById('search-input');
+const searchForm = document.getElementById("search-form");
+const searchInput = document.getElementById("search-input");
+const modelSelect = document.getElementById("modelSelect");
+const apiKeyInput = document.getElementById("api-key-input");
+const modelEndpoint = "https://api.openai.com/v1/engines/";
 
-// Update URL query parameters when model is changed
-function updateURL() {
-  const newURL = new URL(window.location.href);
-  newURL.searchParams.set('model', modelSelect.value);
-  window.location.href = newURL;
-}
-
-// Handle form submission
 function submitForm(event) {
   event.preventDefault();
-  const query = searchInput.value;
-  const model = modelSelect.value;
-  if (!query) return;
+  console.log("Submitting form...");
 
-  console.log('Submitting form...');
+  const query = searchInput.value.trim();
+  const model = modelSelect.value;
+  const apiKey = apiKeyInput.value;
+
+  if (!query) {
+    alert("Please enter a search query.");
+    return;
+  }
+
+  if (!model) {
+    alert("Please select a model.");
+    return;
+  }
+
+  if (!apiKey) {
+    alert("Please enter your OpenAI API key.");
+    return;
+  }
+
   console.log(`Query: ${query}`);
   console.log(`Model: ${model}`);
 
-  // Make API call
-  const apiEndpoint = `https://api.openai.com/v1/engine/${model}/completions`;
-  const prompt = [{
-      "role": "system",
-      "content": "You are a helpful assistant."
-    },
-    {
-      "role": "user",
-      "content": query
-    }
-  ];
-  const data = {
-    "prompt": prompt,
-    "max_tokens": 128,
-    "n": 1,
-    "stop": "\n",
-  };
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${apiKey}`
-  };
-  fetch(apiEndpoint, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(data)
+  const headers = new Headers();
+  headers.append("Content-Type", "application/json");
+  headers.append("Authorization", `Bearer ${apiKey}`);
+
+  fetch(`${modelEndpoint}${model}/completions`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      prompt: query,
+      max_tokens: 64,
+      n: 1,
+      stop: ["\n"]
     })
-    .then(response => response.json())
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Failed to generate response from OpenAI API.");
+      }
+      return response.json();
+    })
     .then(data => {
-      console.log(data);
-      const output = data.choices[0].text.trim();
-      console.log(`Output: ${output}`);
-      const responseContainer = document.getElementById('response-container');
-      responseContainer.innerHTML = `<p>${output}</p>`;
+      console.log(data.choices[0].text);
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+      console.error(error);
+    });
 }
 
-// Add event listeners
-modelSelect.addEventListener('change', updateURL);
-searchForm.addEventListener('submit', submitForm);
+function updateURL() {
+  const newURL = new URL(window.location.href);
+  newURL.searchParams.set("model", modelSelect.value);
+  window.history.pushState("", "", newURL.toString());
+}
+
+(function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const model = urlParams.get("model");
+
+  if (model) {
+    modelSelect.value = model;
+  }
+})();
